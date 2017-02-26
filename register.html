@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+</head>
+<link rel="stylesheet" href="./css/register.css">
+<body>
+<header id="header" class="header">
+    <a href="register.html">注册</a>
+    <a href="login.html">登陆</a>
+</header>
+
+<div class="content">
+    <label><input type="text" name="username" placeholder="用户名" value=""></label>
+    <label><input type="password" name="password" placeholder="密码" value=""></label>
+    <label><input type="password" name="confirm" placeholder="确认密码"></label>
+    <label><input type="text" value="" name="checkNum" placeholder="请输入验证码"></label>
+    <img src="validcode.php" style="width:100px;height:25px;" id="code"/>
+    <a href="javascript:changeCode()">看不清，换一张</a>
+    <button class="btn" id="submit">提交</button>
+
+</div>
+
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    function changeCode() {
+
+        document.getElementById("code").src = "validcode.php?id=" + Math.random();
+    }
+    
+
+    $(document).keyup(function(event){ 
+                if(event.keyCode ==13){ 
+                $("#submit").trigger("click"); 
+                } 
+            });
+    
+
+    $("#submit").click(function () {
+        var username = $("input[name='username']").val();
+        var password = $("input[name='password']").val();
+        var password_confirm = $("input[name='confirm']").val();
+        var checkNum = $("input[name='checkNum']").val();
+
+
+        if (username == undefined || username === '') {
+            alert("用户名不能为空");
+            return;
+        }
+        if (password == undefined || password == '') {
+            alert("密码不能为空");
+            return;
+        }
+        if (password_confirm == undefined || password_confirm == '') {
+            alert("请确认密码");
+            return;
+        } else if (password_confirm !== password) {
+            alert("两次输入的密码不一致");
+            return;
+        }
+        if (checkNum == undefined || checkNum == '') {
+            alert("请输入验证码");
+            return;
+        }
+        $.post(
+                'register.php',
+                {"username": username, "password": password,"checkNum":checkNum},
+                function (result) {
+                    if (result.indexOf('注册成功')!=-1) {
+                        window.location.href="login.html";
+                        alert("注册成功");
+                    } 
+                    if (result.indexOf('该用户已经存在')!=-1) {
+                        window.location.href="register.html";
+                        alert("该用户已经存在");
+                    } 
+                })
+    })
+
+</script>
+</body>
+</html>
